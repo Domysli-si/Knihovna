@@ -155,5 +155,63 @@ class VypujckaDAO:
             return True
         except Exception as e:
             raise Exception(f"Failed to mark overdue: {e}")
+
+    def delete(self, vypujcka_id):
+        """Cancel vypujcka (change state to cancelled)"""
+        query = "UPDATE vypujcky SET stav = 'cancelled' WHERE id = %s"
+        
+        try:
+            self.db.execute_query(query, (vypujcka_id,))
+            return True
+        except Exception as e:
+            raise Exception(f"Failed to cancel vypujcka: {e}")
     
-    def delete(self, vyp
+    def update_overdue_loans(self):
+        """Update overdue loans automatically"""
+        query = """
+            UPDATE vypujcky 
+            SET stav = 'overdue'
+            WHERE stav = 'active' 
+            AND predpokladane_vraceni < CURDATE()
+        """
+        
+        try:
+            self.db.execute_query(query)
+            return True
+        except Exception as e:
+            raise Exception(f"Failed to update overdue loans: {e}")
+    
+    def get_overdue(self):
+        """Get overdue vypujcky"""
+        query = """
+            SELECT v.*, k.nazev as kniha_nazev, 
+                   CONCAT(c.jmeno, ' ', c.prijmeni) as ctenar_jmeno
+            FROM vypujcky v
+            JOIN knihy k ON v.kniha_id = k.id
+            JOIN ctenari c ON v.ctenar_id = c.id
+            WHERE v.stav = 'overdue'
+            ORDER BY v.predpokladane_vraceni
+        """
+        
+        try:
+            results = self.db.execute_select(query)
+            return [self._map_to_object(row) for row in results]
+        except Exception as e:
+            raise Exception(f"Failed to get overdue vypujcky: {e}")
+    
+    def _map_to_object(self, row):
+        """Map database row to Vypujcka object"""
+        vypujcka = Vypujcka(
+            id=row['id'],
+            kniha_id=row['kniha_id'],
+            ctenar_id=row['ctenar_id'],
+            datum_vypujceni=row['datum_vypujceni'],
+            datum_vraceni=row['datum_vraceni'],
+            predpokladane_vraceni=row['predpokladane_vraceni'],
+            stav=row['stav'],
+            poznamka=row['poznamka'],
+            created_at=row['created_at']
+        )
+        vypujcka.kniha_nazev = row.get('kniha_nazev')
+        vypujcka.ctenar_jmeno = row.get('ctenar_jmeno')
+        return vypujcka

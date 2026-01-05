@@ -57,7 +57,7 @@ CREATE TABLE vypujcky (
     datum_vypujceni DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     datum_vraceni DATETIME,
     predpokladane_vraceni DATE NOT NULL,
-    stav ENUM('active', 'returned', 'overdue') NOT NULL DEFAULT 'active',
+    stav ENUM('active', 'returned', 'overdue', 'cancelled') NOT NULL DEFAULT 'active',
     poznamka TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (kniha_id) REFERENCES knihy(id) ON DELETE CASCADE,
