@@ -1,0 +1,33 @@
+knihovna/
+├── src/
+│   ├── config.py          # Načítání konfigurace
+│   ├── database.py        # Připojení k DB
+│   ├── dao/               # DAO vrstva
+│   │   ├── __init__.py
+│   │   ├── autor_dao.py
+│   │   ├── zanr_dao.py
+│   │   ├── kniha_dao.py
+│   │   ├── ctenar_dao.py
+│   │   └── vypujcka_dao.py
+│   ├── models/            # Datové modely
+│   │   ├── __init__.py
+│   │   ├── autor.py
+│   │   ├── zanr.py
+│   │   ├── kniha.py
+│   │   ├── ctenar.py
+│   │   └── vypujcka.py
+│   ├── services/          # Business logika
+│   │   ├── __init__.py
+│   │   ├── import_service.py
+│   │   └── report_service.py
+│   └── main.py            # Hlavní aplikace (UI)
+├── sql/
+│   ├── schema.sql         # DDL pro vytvoření tabulek
+│   └── views.sql          # DDL pro views
+├── data/                  # CSV soubory pro import
+│   ├── knihy.csv
+│   └── autori.csv
+├── doc/                   # Dokumentace
+├── test/                  # Testovací scénáře
+├── config.json            # Konfigurační soubor
+└── requirements.txt       # Python závislosti
